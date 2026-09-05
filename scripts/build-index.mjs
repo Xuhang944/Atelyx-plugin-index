@@ -13,6 +13,8 @@ import { writeFileSync } from "node:fs";
 const TOPIC = "atelyx-plugin";
 const MANIFEST = "atelyx.json";
 const CAP = 500;
+// 已知插件类型（与 App 端 PluginType 一致；未知类型前向兼容跳过）。
+const KNOWN_TYPES = new Set(["tool", "setting", "panel", "app", "node", "theme", "command", "background"]);
 const HEADERS = { "User-Agent": "atelyx-plugin-index", "Accept": "application/vnd.github+json" };
 if (process.env.GH_TOKEN) HEADERS.Authorization = `Bearer ${process.env.GH_TOKEN}`;
 
@@ -28,8 +30,9 @@ function validManifest(m) {
   if (!Number.isInteger(m.schemaVersion) || m.schemaVersion < 1 || m.schemaVersion > 1) return false;
   const need = ["id", "name", "version", "type"];
   if (!need.every((k) => typeof m[k] === "string" && m[k].length > 0)) return false;
-  // main 仅在纯 theme 插件（无代码承载类型）时可省略，与 App 校验一致。
-  const types = Array.isArray(m.types) ? m.types : [];
+  // main 仅在纯 theme 插件（无代码承载类型）时可省略，与 App 校验一致——
+  // 未知附加类型按前向兼容跳过（KNOWN_TYPES 过滤后再判全 theme）。
+  const types = Array.isArray(m.types) ? m.types.filter((t) => typeof t === "string" && KNOWN_TYPES.has(t)) : [];
   const themeOnly = m.type === "theme" && types.every((t) => t === "theme");
   if (!themeOnly && !(typeof m.main === "string" && m.main.length > 0)) return false;
   return true;
