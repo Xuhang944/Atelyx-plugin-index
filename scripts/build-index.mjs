@@ -14,7 +14,7 @@ const TOPIC = "atelyx-plugin";
 const MANIFEST = "atelyx.json";
 const CAP = 500;
 // 已知插件类型（与 App 端 PluginType 一致；未知类型前向兼容跳过）。
-const KNOWN_TYPES = new Set(["tool", "setting", "panel", "app", "node", "theme", "command", "background"]);
+const KNOWN_TYPES = new Set(["tool", "setting", "panel", "app", "node", "theme", "command", "background", "tableview"]);
 const HEADERS = { "User-Agent": "atelyx-plugin-index", "Accept": "application/vnd.github+json" };
 if (process.env.GH_TOKEN) HEADERS.Authorization = `Bearer ${process.env.GH_TOKEN}`;
 
