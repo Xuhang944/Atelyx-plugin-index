@@ -1,0 +1,29 @@
+name: build-index
+on:
+  schedule:
+    - cron: "17 */6 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: 聚合插件索引
+        run: node scripts/build-index.mjs
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: 提交索引变更
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "chore: 刷新插件市场索引"
+          file_pattern: index.json
