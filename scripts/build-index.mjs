@@ -24,12 +24,15 @@ async function gh(url) {
 
 function validManifest(m) {
   if (!m || typeof m !== "object") return false;
-  const need = ["id", "name", "version", "type", "main"];
-  return (
-    need.every((k) => typeof m[k] === "string" && m[k].length > 0) &&
-    Number.isInteger(m.schemaVersion) &&
-    m.schemaVersion > 0
-  );
+  // schemaVersion 与 App 端对齐：>= 1 且不高于当前版本（未来格式插件不进索引，避免装了被拒）。
+  if (!Number.isInteger(m.schemaVersion) || m.schemaVersion < 1 || m.schemaVersion > 1) return false;
+  const need = ["id", "name", "version", "type"];
+  if (!need.every((k) => typeof m[k] === "string" && m[k].length > 0)) return false;
+  // main 仅在纯 theme 插件（无代码承载类型）时可省略，与 App 校验一致。
+  const types = Array.isArray(m.types) ? m.types : [];
+  const themeOnly = m.type === "theme" && types.every((t) => t === "theme");
+  if (!themeOnly && !(typeof m.main === "string" && m.main.length > 0)) return false;
+  return true;
 }
 
 async function fetchManifest(repo, branch) {
