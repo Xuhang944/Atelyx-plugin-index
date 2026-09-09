@@ -1,0 +1,19 @@
+{
+  "generatedAt": "2026-09-09T13:59:57.098Z",
+  "version": "v1",
+  "items": [
+    {
+      "id": "com.atelyx.table-timeline",
+      "name": "表格时间线",
+      "tagline": "表格时间线视图：按时长排布卡片并预演",
+      "type": "tableview",
+      "repo": "Xuhang944/table-timeline",
+      "defaultBranch": "main",
+      "stars": 0,
+      "updatedAt": "2026-09-09T13:58:00Z",
+      "topics": [
+        "atelyx-plugin"
+      ]
+    }
+  ]
+}
